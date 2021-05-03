@@ -8,6 +8,9 @@ namespace SortingResearch
         public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
+
+            var researcher = host.Services.GetService<Researcher>();
+            researcher.Research();
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -15,6 +18,9 @@ namespace SortingResearch
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddSingleton<DataGenerator>();
+
+                    services.AddSingleton<Researcher>().AddOptions<ResearcherSettings>()
+                        .Bind(hostContext.Configuration.GetSection("Researcher"));
                 });
     }
 }
