@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SortingResearch.Sorters;
 
 namespace SortingResearch
 {
@@ -18,6 +19,10 @@ namespace SortingResearch
                 .ConfigureServices((hostContext, services) =>
                 {
                     services.AddSingleton<DataGenerator>();
+
+                    services.AddSingleton<ShellSorter>();
+                    services.AddSingleton<QuickSorter>();
+                    services.AddSingleton<MergeSorter>();
 
                     services.AddSingleton<Researcher>().AddOptions<ResearcherSettings>()
                         .Bind(hostContext.Configuration.GetSection("Researcher"));

@@ -1,18 +1,23 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Microsoft.Extensions.Options;
+using SortingResearch.Sorters;
 
 namespace SortingResearch
 {
     public class Researcher
     {
-        private readonly ResearcherSettings _settings;
         private readonly DataGenerator _dataGenerator;
+        private readonly ResearcherSettings _settings;
+        private readonly IReadOnlyCollection<Sorter> _sorters;
 
-        public Researcher(DataGenerator dataGenerator, IOptions<ResearcherSettings> options)
+        public Researcher(ShellSorter shellSorter, QuickSorter quickSorter, MergeSorter mergeSorter,
+            DataGenerator dataGenerator, IOptions<ResearcherSettings> options)
         {
             _dataGenerator = dataGenerator;
             _settings = options.Value;
+            _sorters = new Sorter[] { shellSorter, quickSorter, mergeSorter };
         }
 
         public void Research()
