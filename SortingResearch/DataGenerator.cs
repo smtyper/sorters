@@ -25,5 +25,16 @@ namespace SortingResearch
             });
             _randomizerDateTime = RandomizerFactory.GetRandomizer(new FieldOptionsDateTime { IncludeTime = true });
         }
+
+        public T[] GetArray<T>(int count) => Enumerable.Range(0, count)
+            .Select(_ => (T)(Type.GetTypeCode(typeof(T)) switch
+            {
+                TypeCode.Byte => _randomizerByte.Generate() as object,
+                TypeCode.Int32 => _randomizerInteger.Generate() as object,
+                TypeCode.String => _randomizerString.Generate() as object,
+                TypeCode.DateTime => _randomizerDateTime.Generate() as object,
+                _ => throw new NotImplementedException()
+            }))
+            .ToArray();
     }
 }
