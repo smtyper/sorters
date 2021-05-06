@@ -13,11 +13,11 @@ namespace SortingResearch
         private readonly IReadOnlyCollection<Sorter> _sorters;
 
         public Researcher(ShellSorter shellSorter, QuickSorter quickSorter, MergeSorter mergeSorter,
-            DataGenerator dataGenerator, IOptions<ResearcherSettings> options)
+            HeapSorter heapSorter, DataGenerator dataGenerator, IOptions<ResearcherSettings> options)
         {
             _dataGenerator = dataGenerator;
             _settings = options.Value;
-            _sorters = new Sorter[] { shellSorter, quickSorter, mergeSorter };
+            _sorters = new Sorter[] { shellSorter, quickSorter, mergeSorter, heapSorter };
         }
 
         public void Research()

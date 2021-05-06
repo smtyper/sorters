@@ -23,6 +23,7 @@ namespace SortingResearch
                     services.AddSingleton<ShellSorter>();
                     services.AddSingleton<QuickSorter>();
                     services.AddSingleton<MergeSorter>();
+                    services.AddSingleton<HeapSorter>();
 
                     services.AddSingleton<Researcher>().AddOptions<ResearcherSettings>()
                         .Bind(hostContext.Configuration.GetSection("Researcher"));
