@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SortingResearch.Sorters;
 
@@ -18,7 +19,9 @@ namespace SortingResearch
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddSingleton<DataGenerator>();
+                    services.AddSingleton<DataGenerator>().AddOptions<DataGeneratorSettings>()
+                        .Bind(hostContext.Configuration.GetSection("DataGenerator"))
+                        .ValidateDataAnnotations();
 
                     services.AddSingleton<ShellSorter>();
                     services.AddSingleton<QuickSorter>();
