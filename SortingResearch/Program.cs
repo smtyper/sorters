@@ -29,7 +29,8 @@ namespace SortingResearch
                     services.AddSingleton<HeapSorter>();
 
                     services.AddSingleton<Researcher>().AddOptions<ResearcherSettings>()
-                        .Bind(hostContext.Configuration.GetSection("Researcher"));
+                        .Bind(hostContext.Configuration.GetSection("Researcher"))
+                        .ValidateDataAnnotations();
                 });
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using Microsoft.Extensions.Options;
@@ -27,6 +28,9 @@ namespace SortingResearch
 
     public class ResearcherSettings
     {
+        [Required]
+        public IReadOnlyCollection<TypeCode> Types { get; set; }
+
         [Required]
         public IReadOnlyCollection<int> CollectionsLength { get; set; }
     }
