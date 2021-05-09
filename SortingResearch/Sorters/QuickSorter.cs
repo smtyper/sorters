@@ -4,19 +4,29 @@ namespace SortingResearch.Sorters
 {
     public class QuickSorter : Sorter
     {
-        protected override void Sort<T>(T[] array) => QuickSort(array, 0, array.Length - 1);
-
-        private static void QuickSort<T>(T[] array, int start, int end) where T : IComparable<T>
+        protected override T[] Sort<T>(T[] array)
         {
-            if (start < end)
+            Stopwatch.Restart();
+
+            QuickSort(array, 0, array.Length - 1);
+
+            Stopwatch.Stop();
+
+            return array;
+        }
+
+        private static void QuickSort<T>(T[] array, int low, int high) where T : IComparable<T>
+        {
+            if (low < high)
             {
-                var pivotPosition = Partition(array, start, end);
-                QuickSort(array, start, pivotPosition - 1);
-                QuickSort(array, pivotPosition + 1, end);
+                var partitionIndex = Partition(array, low, high);
+
+                QuickSort(array, low, partitionIndex - 1);
+                QuickSort(array, partitionIndex + 1, high);
             }
         }
 
-        private static int Partition<T>(T[] array, int start, int end) where T : IComparable<T>
+        private static int Partition<T>(T[] array, int low, int high) where T : IComparable<T>
         {
             void Swap(int first, int second)
             {
@@ -26,18 +36,21 @@ namespace SortingResearch.Sorters
                 array[second] = firstValue;
             }
 
-            var i = start - 1;
-            var pivot = array[end];
-            for (var j = start; j <= end - 1; j++)
+            var pivot = array[high];
+
+            var lowIndex = low - 1;
+
+            for (var j = low; j < high; j++)
                 if (array[j].CompareTo(pivot) <= 0)
                 {
-                    i++;
-                    Swap(i, j);
+                    lowIndex++;
+                    Swap(lowIndex, j);
                 }
 
-            Swap(end, i + 1);
+            Swap(lowIndex + 1, high);
 
-            return i + 1;
+            return lowIndex + 1;
         }
+
     }
 }

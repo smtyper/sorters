@@ -4,7 +4,7 @@ namespace SortingResearch.Sorters
 {
     public class HeapSorter : Sorter
     {
-        protected override void Sort<T>(T[] array)
+        protected override T[] Sort<T>(T[] array)
         {
             void Swap(int first, int second)
             {
@@ -14,6 +14,8 @@ namespace SortingResearch.Sorters
                 array[second] = firstValue;
             }
 
+            Stopwatch.Restart();
+
             for (var i = (array.Length / 2) - 1; i >= 0; i--)
                 Heapify(array, array.Length, i);
 
@@ -22,6 +24,10 @@ namespace SortingResearch.Sorters
                 Swap(0, i);
                 Heapify(array, i, 0);
             }
+
+            Stopwatch.Stop();
+
+            return array;
         }
 
         private static void Heapify<T>(T[] array, int border, int i) where T : IComparable<T>

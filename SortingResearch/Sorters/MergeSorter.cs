@@ -4,7 +4,16 @@ namespace SortingResearch.Sorters
 {
     public class MergeSorter : Sorter
     {
-        protected override void Sort<T>(T[] array) => MergeSort(array, 0, array.Length - 1);
+        protected override T[] Sort<T>(T[] array)
+        {
+            Stopwatch.Restart();
+
+            MergeSort(array, 0, array.Length - 1);
+
+            Stopwatch.Stop();
+
+            return array;
+        }
 
         private static void MergeSort<T>(T[] array, int start, int end) where T : IComparable<T>
         {
