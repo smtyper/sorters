@@ -31,8 +31,8 @@ namespace SortingResearch.Sorters
                     var indexAddition = 0;
 
                     return array.Select(value => getValueByRank(value, iteration))
-                        .OrderBy(value => value)
                         .GroupBy(value => value)
+                        .OrderBy(group => group)
                         .ToDictionary(group => group.Key, group =>
                         {
                             currentIndex += indexAddition;
