@@ -27,6 +27,16 @@ namespace SortingResearch
                     services.AddSingleton<QuickSorter>();
                     services.AddSingleton<MergeSorter>();
                     services.AddSingleton<HeapSorter>();
+                    services.AddSingleton<RadixSorter>().AddOptions<RadixSorterSettings>()
+                        .Configure(options =>
+                        {
+                            var dataGeneratorSection = hostContext.Configuration.GetSection("DataGenerator");
+
+                            options.MaxIntegerRank = dataGeneratorSection["IntegerMax"].Length;
+                            options.MaxStringRank = int.Parse(dataGeneratorSection["StringMaxLength"]);
+                            options.MaxDateTimeRank = bool.Parse(dataGeneratorSection["TimeInDates"]) ? 8 : 3;
+                        });
+                    services.AddSingleton<BuiltInSorter>();
 
                     services.AddSingleton<Researcher>().AddOptions<ResearcherSettings>()
                         .Bind(hostContext.Configuration.GetSection("Researcher"))
