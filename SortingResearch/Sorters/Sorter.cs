@@ -6,16 +6,15 @@ namespace SortingResearch.Sorters
 {
     public abstract class Sorter
     {
-        private readonly string _sorterName;
         protected readonly Stopwatch Stopwatch;
 
         protected Sorter()
         {
             Stopwatch = new Stopwatch();
-            _sorterName = this.GetType().Name;
+            Name = GetType().Name;
         }
 
-        public string Name => _sorterName;
+        public string Name { get; }
 
 
         public (T[] Result, TimeSpan Measurements) MeasureSorting<T>(T[] sourceArray) where T : IComparable<T> =>
