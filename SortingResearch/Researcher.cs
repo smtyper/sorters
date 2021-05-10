@@ -18,13 +18,22 @@ namespace SortingResearch
         private readonly ResearcherSettings _settings;
         private readonly IReadOnlyCollection<Sorter> _sorters;
 
-        public Researcher(ShellSorter shellSorter, QuickSorter quickSorter, MergeSorter mergeSorter,
+        public Researcher(BubleSorter bubleSorter, ShellSorter shellSorter, QuickSorter quickSorter, MergeSorter mergeSorter,
             HeapSorter heapSorter, RadixSorter radixSorter, BuiltInSorter builtInSorter, DataGenerator dataGenerator,
             IOptions<ResearcherSettings> options)
         {
             _dataGenerator = dataGenerator;
             _settings = options.Value;
-            _sorters = new Sorter[] { shellSorter, quickSorter, mergeSorter, heapSorter, radixSorter, builtInSorter };
+            _sorters = new Sorter[]
+            {
+                bubleSorter,
+                shellSorter,
+                quickSorter,
+                mergeSorter,
+                heapSorter,
+                radixSorter,
+                builtInSorter
+            };
         }
 
         public async Task ResearchAsync()

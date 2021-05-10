@@ -17,6 +17,7 @@ static IHostBuilder CreateHostBuilder(string[] args) =>
                 .Bind(hostContext.Configuration.GetSection("DataGenerator"))
                 .ValidateDataAnnotations();
 
+            services.AddSingleton<BubleSorter>();
             services.AddSingleton<ShellSorter>();
             services.AddSingleton<QuickSorter>();
             services.AddSingleton<MergeSorter>();
