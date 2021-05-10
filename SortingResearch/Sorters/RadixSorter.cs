@@ -15,7 +15,7 @@ namespace SortingResearch.Sorters
             TypeCode.Byte or TypeCode.Int32 => RadixSort(array as int[], _settings.MaxIntegerRank,
                 GetNumberByRank) as T[],
             TypeCode.String => RadixSort(array as string[], _settings.MaxStringRank, GetStringByRank) as T[],
-            TypeCode.DateTime => RadixSort(array as DateTime[], _settings.MaxDateTimeRank, GetDateNumberByRank) as T[],
+            TypeCode.DateTime => RadixSort(array as DateTime[], 3, GetDateNumberByRank) as T[],
             _ => throw new NotImplementedException()
         };
 
@@ -32,7 +32,7 @@ namespace SortingResearch.Sorters
 
                     return array.Select(value => getValueByRank(value, iteration))
                         .GroupBy(value => value)
-                        .OrderBy(group => group)
+                        .OrderBy(group => group.Key)
                         .ToDictionary(group => group.Key, group =>
                         {
                             currentIndex += indexAddition;
@@ -66,27 +66,11 @@ namespace SortingResearch.Sorters
         private string GetStringByRank(string source, int rank) => _settings.MaxStringRank - 1 - rank >= source.Length ?
             string.Empty : source[_settings.MaxStringRank - 1 - rank].ToString();
 
-        private long GetDateNumberByRank(DateTime dateTime, int rank) => _settings.MaxDateTimeRank switch
+        private long GetDateNumberByRank(DateTime dateTime, int rank) => rank switch
         {
-            3 => rank switch
-            {
-                0 => dateTime.Day,
-                1 => dateTime.Month,
-                2 => dateTime.Year,
-                _ => throw new NotImplementedException()
-            },
-            8 => rank switch
-            {
-                0 => dateTime.Ticks,
-                1 => dateTime.Millisecond,
-                2 => dateTime.Second,
-                3 => dateTime.Minute,
-                4 => dateTime.Hour,
-                5 => dateTime.Day,
-                6 => dateTime.Month,
-                7 => dateTime.Year,
-                _ => throw new NotImplementedException()
-            },
+            0 => dateTime.Day,
+            1 => dateTime.Month,
+            2 => dateTime.Year,
             _ => throw new NotImplementedException()
         };
     }
@@ -96,7 +80,5 @@ namespace SortingResearch.Sorters
         public int MaxIntegerRank { get; set; }
 
         public int MaxStringRank { get; set; }
-
-        public int MaxDateTimeRank { get; set; }
     }
 }
