@@ -5,6 +5,7 @@ using System.Linq;
 using Microsoft.Extensions.Options;
 using RandomDataGenerator.FieldOptions;
 using RandomDataGenerator.Randomizers;
+using SortingResearch.Models;
 
 namespace SortingResearch
 {
@@ -38,7 +39,9 @@ namespace SortingResearch
             });
             _randomizerDateTime = RandomizerFactory.GetRandomizer(new FieldOptionsDateTime
             {
-                IncludeTime = _settings.TimeInDates
+                From = _settings.DateTimeMin,
+                To = _settings.DateTimeMax,
+                IncludeTime = false
             });
         }
 
@@ -82,7 +85,9 @@ namespace SortingResearch
 
         public int StringMaxLength { get; set; }
 
-        public bool TimeInDates { get; set; }
+        public DateTime DateTimeMin { get; set; }
+
+        public DateTime DateTimeMax { get; set; }
 
         [Range(0, 1)]
         public double PartialSortPercent { get; set; }
