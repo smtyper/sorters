@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
@@ -6,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SortingResearch.Models;
 using SortingResearch.Sorters;
@@ -111,9 +113,17 @@ namespace SortingResearch
         private IReadOnlyCollection<Measurement> GetMeasurements<T>(ArrayGenerationType generationType)
             where T : IComparable<T> => _settings.CollectionsLength.SelectMany(length =>
             {
-                var array = _dataGenerator.GetGenerationMethod<byte>(generationType)(length);
-                var measurements = _sorters.SelectMany(sorter => sorter
-                    .MeasureSorting(array, _settings.Repeats, generationType));
+                var array = _dataGenerator.GetGenerationMethod<T>(generationType)(length);
+                var measurements = new ConcurrentBag<Measurement>();
+
+                var actions = _sorters.Select(sorter => new Action(() =>
+                {
+                    var repeats = sorter.MeasureSorting(array, _settings.Repeats, generationType);
+                    foreach (var repeat in repeats)
+                        measurements.Add(repeat);
+                }))
+                    .ToArray();
+                Parallel.Invoke(actions);
 
                 return measurements;
             })
