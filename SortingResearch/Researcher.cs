@@ -30,6 +30,8 @@ namespace SortingResearch
 
     public class ResearcherSettings
     {
+        [Range(1, 10)]
+        public int Repeats { get; set; }
         [Required]
         public IReadOnlyCollection<TypeCode> Types { get; set; }
 
