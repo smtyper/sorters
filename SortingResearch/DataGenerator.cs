@@ -45,9 +45,17 @@ namespace SortingResearch
             });
         }
 
-        public T[] GetArray<T>(int count) => GetEnumerable<T>(count).ToArray();
+        public Func<int, T[]> GetGenerationMethod<T>(ArrayGenerationType type) => type switch
+        {
+            ArrayGenerationType.Random => GetArray<T>,
+            ArrayGenerationType.DescendingSorted => GetDescendingSortedArray<T>,
+            ArrayGenerationType.PartiallySorted => GetPartiallySortedArray<T>,
+            _ => throw new NotImplementedException()
+        };
 
-        public T[] GetPartiallySortedArray<T>(int count)
+        private T[] GetArray<T>(int count) => GetEnumerable<T>(count).ToArray();
+
+        private T[] GetPartiallySortedArray<T>(int count)
         {
             var array = GetArray<T>(count);
             var sortedCount = Convert.ToInt32(_settings.PartialSortPercent * count);
@@ -60,7 +68,7 @@ namespace SortingResearch
             return result;
         }
 
-        public T[] GetDescendingSortedArray<T>(int count) => GetEnumerable<T>(count)
+        private T[] GetDescendingSortedArray<T>(int count) => GetEnumerable<T>(count)
             .OrderByDescending(value => value)
             .ToArray();
 

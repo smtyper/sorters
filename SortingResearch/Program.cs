@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SortingResearch.Sorters;
@@ -7,12 +9,12 @@ namespace SortingResearch
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
 
             var researcher = host.Services.GetService<Researcher>();
-            researcher.Research();
+            await researcher.ResearchAsync();
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -34,7 +36,6 @@ namespace SortingResearch
 
                             options.MaxIntegerRank = dataGeneratorSection["IntegerMax"].Length;
                             options.MaxStringRank = int.Parse(dataGeneratorSection["StringMaxLength"]);
-                            options.MaxDateTimeRank = bool.Parse(dataGeneratorSection["TimeInDates"]) ? 8 : 3;
                         });
                     services.AddSingleton<BuiltInSorter>();
 
