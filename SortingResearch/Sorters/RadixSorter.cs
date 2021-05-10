@@ -12,8 +12,8 @@ namespace SortingResearch.Sorters
 
         protected override T[] Sort<T>(T[] array) => Type.GetTypeCode(typeof(T)) switch
         {
-            TypeCode.Byte or TypeCode.Int32 => RadixSort(array as int[], _settings.MaxIntegerRank,
-                GetNumberByRank) as T[],
+            TypeCode.Byte => RadixSort(array as byte[], 1, (num, _) => num) as T[],
+            TypeCode.Int32 => RadixSort(array as int[], _settings.MaxIntegerRank, GetNumberByRank) as T[],
             TypeCode.String => RadixSort(array as string[], _settings.MaxStringRank, GetStringByRank) as T[],
             TypeCode.DateTime => RadixSort(array as DateTime[], 3, GetDateNumberByRank) as T[],
             _ => throw new NotImplementedException()
