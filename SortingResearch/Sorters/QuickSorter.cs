@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace SortingResearch.Sorters
 {
@@ -6,51 +7,53 @@ namespace SortingResearch.Sorters
     {
         protected override T[] Sort<T>(T[] array)
         {
-            Stopwatch.Restart();
+            var stack = new Stack<int>();
 
-            QuickSort(array, 0, array.Length - 1);
+            stack.Push(0);
+            stack.Push(array.Length - 1);
 
-            Stopwatch.Stop();
+            while (stack.Any())
+            {
+                var rightIndexOfSubset = stack.Pop();
+                var leftIndexOfSubSet = stack.Pop();
+
+                var rightIndex = rightIndexOfSubset;
+                var leftIndex = leftIndexOfSubSet + 1;
+                var pivotIndex = leftIndexOfSubSet;
+
+                if (leftIndex > rightIndex)
+                    continue;
+
+                while (leftIndex < rightIndex)
+                {
+                    while (leftIndex <= rightIndex && array[leftIndex].CompareTo(array[pivotIndex]) <= 0)
+                        leftIndex++;
+
+                    while (leftIndex <= rightIndex && array[rightIndex].CompareTo(array[pivotIndex]) >= 0)
+                        rightIndex--;
+
+                    if (rightIndex >= leftIndex)
+                        Swap(array, leftIndex, rightIndex);
+                }
+
+                if (pivotIndex <= rightIndex)
+                    if (array[pivotIndex].CompareTo(array[rightIndex]) > 0)
+                        Swap(array, pivotIndex, rightIndex);
+
+                if (leftIndexOfSubSet < rightIndex)
+                {
+                    stack.Push(leftIndexOfSubSet);
+                    stack.Push(rightIndex - 1);
+                }
+
+                if (rightIndexOfSubset > rightIndex)
+                {
+                    stack.Push(rightIndex + 1);
+                    stack.Push(rightIndexOfSubset);
+                }
+            }
 
             return array;
         }
-
-        private static void QuickSort<T>(T[] array, int low, int high) where T : IComparable<T>
-        {
-            if (low < high)
-            {
-                var partitionIndex = Partition(array, low, high);
-
-                QuickSort(array, low, partitionIndex - 1);
-                QuickSort(array, partitionIndex + 1, high);
-            }
-        }
-
-        private static int Partition<T>(T[] array, int low, int high) where T : IComparable<T>
-        {
-            void Swap(int first, int second)
-            {
-                var firstValue = array[first];
-
-                array[first] = array[second];
-                array[second] = firstValue;
-            }
-
-            var pivot = array[high];
-
-            var lowIndex = low - 1;
-
-            for (var j = low; j < high; j++)
-                if (array[j].CompareTo(pivot) <= 0)
-                {
-                    lowIndex++;
-                    Swap(lowIndex, j);
-                }
-
-            Swap(lowIndex + 1, high);
-
-            return lowIndex + 1;
-        }
-
     }
 }

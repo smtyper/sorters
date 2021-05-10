@@ -20,10 +20,8 @@ namespace SortingResearch.Sorters
         };
 
         private T[] RadixSort<T, TRadixValue>(T[] array, int maxRank, Func<T, int, TRadixValue> getValueByRank)
-        where T : IComparable<T>
+            where T : IComparable<T>
         {
-            Stopwatch.Restart();
-
             var indexСalculations = Enumerable.Range(0, maxRank)
                 .ToDictionary(iteration => iteration, iteration =>
                 {
@@ -55,8 +53,6 @@ namespace SortingResearch.Sorters
 
                 currentArray = sortingResult;
             }
-
-            Stopwatch.Stop();
 
             return currentArray;
         }

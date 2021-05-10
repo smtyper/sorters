@@ -4,8 +4,6 @@
     {
         protected override T[] Sort<T>(T[] array)
         {
-            Stopwatch.Restart();
-
             var step = array.Length / 2;
 
             while (step > 0)
@@ -26,8 +24,6 @@
 
                 step /= 2;
             }
-
-            Stopwatch.Stop();
 
             return array;
         }

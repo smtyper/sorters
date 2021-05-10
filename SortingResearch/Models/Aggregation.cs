@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using CsvHelper.Configuration;
 
 namespace SortingResearch.Models
 {

@@ -11,11 +11,11 @@ namespace SortingResearch
 {
     public class DataGenerator
     {
-        private readonly DataGeneratorSettings _settings;
         private readonly IRandomizerNumber<byte> _randomizerByte;
         private readonly IRandomizerDateTime _randomizerDateTime;
         private readonly IRandomizerNumber<int> _randomizerInteger;
         private readonly IRandomizerString _randomizerString;
+        private readonly DataGeneratorSettings _settings;
 
         public DataGenerator(IOptions<DataGeneratorSettings> options)
         {

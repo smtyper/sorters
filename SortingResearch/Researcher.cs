@@ -7,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SortingResearch.Models;
 using SortingResearch.Sorters;
@@ -20,7 +19,8 @@ namespace SortingResearch
         private readonly ResearcherSettings _settings;
         private readonly IReadOnlyCollection<Sorter> _sorters;
 
-        public Researcher(BubleSorter bubleSorter, ShellSorter shellSorter, QuickSorter quickSorter, MergeSorter mergeSorter,
+        public Researcher(BubleSorter bubleSorter, ShellSorter shellSorter, QuickSorter quickSorter,
+            MergeSorter mergeSorter,
             HeapSorter heapSorter, RadixSorter radixSorter, BuiltInSorter builtInSorter, DataGenerator dataGenerator,
             IOptions<ResearcherSettings> options)
         {
@@ -28,13 +28,7 @@ namespace SortingResearch
             _settings = options.Value;
             _sorters = new Sorter[]
             {
-                bubleSorter,
-                shellSorter,
-                quickSorter,
-                mergeSorter,
-                heapSorter,
-                radixSorter,
-                builtInSorter
+                bubleSorter, shellSorter, quickSorter, mergeSorter, heapSorter, radixSorter, builtInSorter
             };
         }
 
@@ -43,29 +37,29 @@ namespace SortingResearch
             var allMeasurements = MeasureSorters();
 
             foreach (var (generationType, dictionary) in allMeasurements)
-                foreach (var (type, measurements) in dictionary)
-                {
-                    var aggregations = measurements.GroupBy(measure => (measure.SorterName, measure.ArrayLength))
-                        .Select(group => new Measurement
-                        {
-                            SorterName = group.Key.SorterName,
-                            ArrayGenerationType = group.First().ArrayGenerationType,
-                            ArrayType = group.First().ArrayType,
-                            ArrayLength = group.First().ArrayLength,
-                            Elapsed = TimeSpan.FromTicks((long)group.Average(measurement => measurement.Elapsed.Ticks))
-                        })
-                        .GroupBy(measurement => measurement.SorterName)
-                        .Select(group => new Aggregation
-                        {
-                            SorterName = group.First().SorterName,
-                            ElapsedTimes = group.OrderBy(measurement => measurement.ArrayLength)
-                                .ToDictionary(measurement => measurement.ArrayLength,
-                                    measurement => measurement.Elapsed)
-                        })
-                        .ToArray();
+            foreach (var (type, measurements) in dictionary)
+            {
+                var aggregations = measurements.GroupBy(measure => (measure.SorterName, measure.ArrayLength))
+                    .Select(group => new Measurement
+                    {
+                        SorterName = group.Key.SorterName,
+                        ArrayGenerationType = group.First().ArrayGenerationType,
+                        ArrayType = group.First().ArrayType,
+                        ArrayLength = group.First().ArrayLength,
+                        Elapsed = TimeSpan.FromTicks((long)group.Average(measurement => measurement.Elapsed.Ticks))
+                    })
+                    .GroupBy(measurement => measurement.SorterName)
+                    .Select(group => new Aggregation
+                    {
+                        SorterName = group.First().SorterName,
+                        ElapsedTimes = group.OrderBy(measurement => measurement.ArrayLength)
+                            .ToDictionary(measurement => measurement.ArrayLength,
+                                measurement => measurement.Elapsed)
+                    })
+                    .ToArray();
 
-                    await SaveAggregation(aggregations, generationType, type);
-                }
+                await SaveAggregation(aggregations, generationType, type);
+            }
         }
 
         private async Task SaveAggregation(IReadOnlyCollection<Aggregation> aggregations,
@@ -89,26 +83,23 @@ namespace SortingResearch
             foreach (var aggregation in aggregations)
             {
                 csvWriter.WriteField(aggregation.SorterName);
-                foreach (var elapsed in aggregation.ElapsedTimes.Values)
-                {
-                    csvWriter.WriteField(elapsed);
-                }
+                foreach (var elapsed in aggregation.ElapsedTimes.Values) csvWriter.WriteField(elapsed);
 
                 await csvWriter.NextRecordAsync();
             }
         }
 
-        private Dictionary<ArrayGenerationType,Dictionary<TypeCode,IReadOnlyCollection<Measurement>>>
+        private Dictionary<ArrayGenerationType, Dictionary<TypeCode, IReadOnlyCollection<Measurement>>>
             MeasureSorters() => Enum.GetValues<ArrayGenerationType>()
-                .ToDictionary(generationType => generationType, generationType => _settings.Types
-                    .ToDictionary(type => type, type => type switch
-                    {
-                        TypeCode.Byte => GetMeasurements<byte>(generationType),
-                        TypeCode.Int32 => GetMeasurements<int>(generationType),
-                        TypeCode.String => GetMeasurements<string>(generationType),
-                        TypeCode.DateTime => GetMeasurements<DateTime>(generationType),
-                        _ => throw new NotImplementedException()
-                    }));
+            .ToDictionary(generationType => generationType, generationType => _settings.Types
+                .ToDictionary(type => type, type => type switch
+                {
+                    TypeCode.Byte => GetMeasurements<byte>(generationType),
+                    TypeCode.Int32 => GetMeasurements<int>(generationType),
+                    TypeCode.String => GetMeasurements<string>(generationType),
+                    TypeCode.DateTime => GetMeasurements<DateTime>(generationType),
+                    _ => throw new NotImplementedException()
+                }));
 
         private IReadOnlyCollection<Measurement> GetMeasurements<T>(ArrayGenerationType generationType)
             where T : IComparable<T> => _settings.CollectionsLength.SelectMany(length =>
@@ -117,17 +108,17 @@ namespace SortingResearch
                 var measurements = new ConcurrentBag<Measurement>();
 
                 var actions = _sorters.Select(sorter => new Action(() =>
-                {
-                    var repeats = sorter.MeasureSorting(array, _settings.Repeats, generationType);
-                    foreach (var repeat in repeats)
-                        measurements.Add(repeat);
-                }))
+                    {
+                        var repeats = sorter.MeasureSorting(array, _settings.Repeats, generationType);
+                        foreach (var repeat in repeats)
+                            measurements.Add(repeat);
+                    }))
                     .ToArray();
                 Parallel.Invoke(actions);
 
                 return measurements;
             })
-                .ToArray();
+            .ToArray();
     }
 
     public class ResearcherSettings

@@ -6,11 +6,7 @@ namespace SortingResearch.Sorters
     {
         protected override T[] Sort<T>(T[] array)
         {
-            Stopwatch.Restart();
-
             MergeSort(array, 0, array.Length - 1);
-
-            Stopwatch.Stop();
 
             return array;
         }

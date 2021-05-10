@@ -3,11 +3,7 @@ using Microsoft.Extensions.Hosting;
 using SortingResearch;
 using SortingResearch.Sorters;
 
-
-var host = CreateHostBuilder(args).Build();
-var researcher = host.Services.GetService<Researcher>();
-
-await researcher.ResearchAsync();
+await CreateHostBuilder(args).Build().Services.GetService<Researcher>().ResearchAsync();
 
 static IHostBuilder CreateHostBuilder(string[] args) =>
     Host.CreateDefaultBuilder(args)
