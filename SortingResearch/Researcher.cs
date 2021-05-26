@@ -83,7 +83,8 @@ namespace SortingResearch
             foreach (var aggregation in aggregations)
             {
                 csvWriter.WriteField(aggregation.SorterName);
-                foreach (var elapsed in aggregation.ElapsedTimes.Values) csvWriter.WriteField(elapsed);
+                foreach (var elapsed in aggregation.ElapsedTimes.Values)
+                    csvWriter.WriteField(elapsed.TotalMilliseconds);
 
                 await csvWriter.NextRecordAsync();
             }
